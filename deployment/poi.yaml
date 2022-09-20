@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: poi-service
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: poi
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poi-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poi
+  template:
+    metadata:
+      labels:
+        app: poi
+    spec:
+      containers:
+      - env:
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: dbcredentials
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: dbcredentials
+        - name: SQL_SERVER
+          value: sqlserverbyi5325.database.windows.net
+        - name: SQL_DBNAME
+          value: mydrivingDB
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        image: registrybyi5325.azurecr.io/tripinsights/poi:1.0
+        name: poi
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          volumes:
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: azure-kv
