@@ -1,0 +1,32 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    # get the client id by the az-created service principle
+    # az aks update -n kuber5 -g teamResources --enable-managed-identity
+    userAssignedIdentityID: "fb5037a4-3445-4f60-af65-4bb5ac07a064"
+    keyvaultName: "kuber5"               
+    objects:  |
+      array:
+        - |
+          objectName: dbUsername          
+          objectType: secret                                      
+        - |
+          objectName: dbPassword               
+          objectType: secret
+    tenantId: "317611c7-646f-4d80-a168-3703b7a61d7b"   
+    subscriptionId: "cab77d5e-9d9b-43ef-9bd8-8b2e3180e975"
+    resourceGroup: "teamResources"
+  secretObjects:                             
+  - secretName: dbcredentials   
+    data:
+    - key: username                          
+      objectName: dbUsername                                          
+    - key: password                          
+      objectName: dbPassword                                        
+    type: Opaque

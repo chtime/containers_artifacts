@@ -25,7 +25,14 @@ spec:
         app: userprofile
     spec:
       containers:
-      - env:
+      - name: userprofile
+        image: registrybyi5325.azurecr.io/tripinsights/userprofile:1.0
+        volumeMounts:
+        - mountPath: "/mnt/secrets-store"
+          # this mount only triggers the keyvault provider to generate the secret
+          name: secrets-store
+          readOnly: true
+        env:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
@@ -40,8 +47,6 @@ spec:
           value: sqlserverbyi5325.database.windows.net
         - name: SQL_DBNAME
           value: mydrivingDB
-        image: registrybyi5325.azurecr.io/tripinsights/userprofile:1.0
-        name: userprofile
         ports:
         - containerPort: 80
           protocol: TCP
@@ -49,3 +54,10 @@ spec:
           limits:
             cpu: 100m
             memory: 100Mi
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: azure-kvname

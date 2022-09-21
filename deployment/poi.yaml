@@ -25,7 +25,14 @@ spec:
         app: poi
     spec:
       containers:
-      - env:
+      - name: poi
+        image: registrybyi5325.azurecr.io/tripinsights/poi:1.0
+        volumeMounts:
+        - mountPath: "/mnt/secrets-store"
+          # this mount only triggers the keyvault provider to generate the secret
+          name: secrets-store
+          readOnly: true
+        env:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
@@ -42,8 +49,6 @@ spec:
           value: mydrivingDB
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
-        image: registrybyi5325.azurecr.io/tripinsights/poi:1.0
-        name: poi
         ports:
         - containerPort: 80
           protocol: TCP
@@ -58,4 +63,4 @@ spec:
           driver: secrets-store.csi.k8s.io
           readOnly: true
           volumeAttributes:
-            secretProviderClass: azure-kv
+            secretProviderClass: azure-kvname
