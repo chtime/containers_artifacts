@@ -9,7 +9,7 @@ spec:
     useVMManagedIdentity: "true"
     # get the client id by the az-created service principle
     # az aks update -n kuber5 -g teamResources --enable-managed-identity
-    userAssignedIdentityID: "fb5037a4-3445-4f60-af65-4bb5ac07a064"
+    userAssignedIdentityID: "dcf5c741-f178-4386-9712-b75a20b51960"
     keyvaultName: "kuber5"               
     objects:  |
       array:
