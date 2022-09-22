@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginxxl
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginxxl
+  template:
+    metadata:
+      labels:
+        app: nginxxl
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 1M
+            memory: 1Ti
+          limits:
+            cpu: 1M
+            memory: 1Ti
